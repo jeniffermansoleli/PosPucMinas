@@ -1,0 +1,155 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+<div class="card">
+								<div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">Extorno</h4>
+										
+									</div>
+								</div>
+								<div class="card-body">
+									
+
+									<div class="table-responsive">
+										<div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+											
+									<div class="row"><div class="col-sm-12">
+										<table id="add-row" class="display table table-striped table-hover dataTable" role="grid" aria-describedby="add-row_info">
+											
+
+											<thead>
+												<tr role="row">
+													<th class="sorting" tabindex="0" aria-controls="add-row" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" style="width: 100.251px;">CPF</th>
+													<th class="sorting" tabindex="0" aria-controls="add-row" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 100.285px;">Valor</th><th style="width: 100.281px;" class="sorting" tabindex="0" aria-controls="add-row" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Ações</th></tr>
+											</thead>
+										
+											<tbody>
+					
+				  							</tbody>
+										</table>
+									</div>
+									</div>
+										
+										</div>
+									</div>
+								</div>
+							</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script type="text/javascript">
+	window.onload = transacoes();
+	function transacoes(){
+		user = 'owner='+localStorage.getItem("cpfuser");
+		console.log(user);
+		$.post("api/vendas.php", user, (t)=>{
+			$("tbody").html(t);
+		})
+	}
+
+	
+
+
+	function extorno(id){
+
+		 $.confirm({
+		 	 title: 'Deseja realizar estorno?',
+		 	 content:'',
+        buttons: {
+            Sim: function () {
+                id = 'id='+id;
+								console.log(id);
+								$.post("api/extorno.php", id,(e)=>{
+									e = JSON.parse(e);
+									if(e.status == 'success'){
+										msgextorno("Valor devolvido ao comprador");
+										transacoes();
+									}
+								})
+                
+            },
+            Não: {
+               
+            }
+        }
+    });
+
+		
+	}
+
+
+document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>{
+		$("#modal-extrato").modal("hide");
+	}))
+
+
+	function extrato(id){
+		id = 'id='+id;
+		$("#cartao").mask("000 000 000");
+		$.post("api/extrato.php", id, (e)=>{
+			e = JSON.parse(e);
+
+			$("#cliente").html(e.cliente);
+			$("#data").html(e.data);
+			$("#cartao").html(e.cartao).mask("000 000 000");
+			
+			$("#saldo").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(e.saldo));
+			$("#valor").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(e.valor));
+			$("#conta").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(e.conta));
+
+
+		})
+		$("#modal-extrato").modal("show");
+
+	}
+
+
+</script>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-extrato" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content bg-primary-gradient">
+      <div class="modal-header">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Extrato da Venda</h5>
+        <strong id="cancel" class="text-white" style="cursor: pointer;">x</strong>
+      </div>
+      <div class="modal-body text-white">
+        <div class="row">
+        	<input type="hidden" id="id-extrato">
+        	
+        	<div class="col">
+        		<h6>Cliente: <span id="cliente">Usuario</span></h6>
+        		
+        	</div>
+        	<div class="col-auto">
+        		<small id="data">00 mai</small>
+        	</div>
+
+        	<div class="container">
+        		<h6 class="mt-2">Cartão: <span id="cartao">000 000 000</span></h6>
+        	</div>
+
+        	<div class="container">
+	        	<div class="row mt-3">
+	        		<div class="col">
+	        			<h6>Saldo: <span class="text-success" id="saldo">R$ 0,00</span></h6>
+	        			<h6>Valor: <span class="text-danger" id="valor">- R$ 0,00</span></h6>
+	        		</div>
+	        		<div class="col-auto">
+	        			<h6 class="mt-4">Total: <span class="" id="conta">R$ 0,00</span></h6>
+
+	        		</div>
+	        	</div>
+	        </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-danger btn-sm" id="cancel">Cancelar</button>
+        <button type="button" class="btn btn-white btn-border btn-sm" id="cancel">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>

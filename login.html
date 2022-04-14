@@ -197,23 +197,15 @@
 
 	})
 
+
 	$("#recuperar").click(()=>{
 		email = 'email='+$("#email").val();
-	
-		$.post("admin/api/verifica.php", email,(t)=>{
+		$.post("admin/api/verifica.php", email, (t)=>{
 			t = JSON.parse(t);
-			if(t.status == "success"){
-				data = 'nome='+t.nome+'&email='+t.email+'&senha='+t.senha;
-				
-				$.post("admin/api/send.php", data, (s)=>{
-					if(s == '1'){
-						$("#success").css("display", "block");
-					}else{
-						console.log(s);
-					}
-				})
-				
-
+			if(t.status == 'success'){
+				location.href = 'login.html';
+			}else if(t.status == 'erro'){
+				$("#erro").css("display", "block");
 			}
 		})
 	})

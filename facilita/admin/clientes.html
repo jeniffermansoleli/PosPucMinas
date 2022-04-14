@@ -1,0 +1,490 @@
+<style>
+	#erro1, #erro2, #erro3, #erro4 {
+		display: none;
+	}
+</style>
+<div class="card">
+								<div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">Clientes</h4>
+										<button class="btn btn-primary btn-sm ml-auto" id="add-cliente">
+											<i class="fa fa-plus mr-2"></i>
+											ADICIONAR
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+									
+
+									<div class="table-responsive">
+										<div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+											<div class="row">
+												<div class="col-sm-12 col-md-6"></div>
+												<div class="col-sm-12 col-md-6"><div id="add-row_filter" class="dataTables_filter"><label>Buscar:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="add-row" id="buscar"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="add-row" class="display table table-striped table-hover dataTable" role="grid" aria-describedby="add-row_info">
+											
+
+											<thead>
+												<tr role="row">
+													<th style="width: 194.531px;">Nome Completo</th><th style="width: 284.562px;">E-mail</th>
+													<th style="width: 284.562px;">CPF</th>
+													<th style="width: 151.625px;">Status</th>
+													<th style="width: 126.281px;">Ações</th>
+												</tr>
+											</thead>
+										
+											<tbody>
+					
+				  							</tbody>
+										</table>
+									</div>
+									</div>
+										
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+<script type="text/javascript">
+	window.onload = clientes();
+	
+	function clientes(){
+		admin = "user="+localStorage.getItem("user");
+		$.post("api/clientes.php", admin,(t)=>{
+			$("tbody").html(t);
+		})
+	}
+	$("#add-cliente").click(function(){
+		$("#modal-add").modal("show");
+	})
+	document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>{
+		$("#modal-add").modal("hide");
+		$("#nome").val("");
+		$("#add-email").val("");
+		$("#senha").val("");
+		$("#cpf").val("");
+		$("#saldop").val("");
+		$("#erroradd").css("display", "none");
+		$("#erro1").css("display", "none");
+		$("#erro2").css("display", "none");
+		$("#erro3").css("display", "none");
+		$("#erro4").css("display", "none");
+	}))
+
+	
+	$("#cpf").mask("000.000.000-00", {reverse: false});
+	$("#tcpf").mask("000.000.000-00", {reverse: false});
+
+	function makeid(length) {
+	    var result           = '';
+	    var characters       = '0123456789';
+	    var charactersLength = characters.length;
+	    for ( var i = 0; i < length; i++ ) {
+	      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	   }
+	   return result
+	}
+
+
+	$("#add").click(()=>{
+		nome = $("#nome").val();
+		email = $("#add-email").val();
+		senha = $("#senha").val();
+		cpf = $("#cpf").val();
+		saldo = $("#saldop").val();
+		if(saldo == ''){
+			saldo = '0.00';
+		}
+
+		dados = 'nome='+nome+'&email='+email+'&senha='+senha+'&cpf='+cpf+'&saldo='+saldo+'&owner='+localStorage.getItem('user')+'&';
+		
+		if(nome == ''){
+			$("#erro1").css("display", "block");
+		}else if(email == ''){
+			$("#erro2").css("display", "block");
+		}else if(senha == ''){
+			$("#erro4").css("display", "block");
+		}else if(cpf == ''){
+			$("#erro3").css("display", "block");
+		}else{
+			card();
+		}
+		function card(){
+			c = 'card='+makeid(9);
+
+			$.post("api/card-verify.php",c, (f)=>{
+
+				if(f == 0){
+					dados = dados+c;
+					console.log(dados)
+					$.post("api/add-user.php", dados, (t)=>{
+						if(t == 1){
+							$("#modal-add").modal("hide");
+							clientes();
+							$("#nome").val("");
+		 					$("#add-email").val("");
+							$("#senha").val("");
+							$("#cpf").val("");
+							$("#saldop").val("");
+
+							success("Usuário "+nome+" adicionado");
+							$("#erro1").css("display", "none");
+							$("#erro2").css("display", "none");
+							$("#erro3").css("display", "none");
+							$("#erro4").css("display", "none");
+							$("#erroradd").css("display", "none");
+						}else if(t == 0){
+							$("#erroradd").css("display", "block");
+						}
+					})
+				}else{
+					console.log("já existe!");
+					card();
+				}
+				
+			})
+
+		}
+
+	})
+	
+	
+
+	function view(id){
+		id = 'user='+id;
+		$.post("api/infos-clientes.php", id, (t)=>{
+			t = JSON.parse(t);
+			$("#tid").val(t.id);
+			$("#tnome").val(t.nome);
+			$("#temail").val(t.email);
+			$("#tsenha").val(t.senha);
+			$("#tcpf").val(t.cpf);
+			$("#tdata").html(t.data.split("-").reverse().join("/"));
+
+			$("#modal-view").modal("show");
+		})
+	}
+
+	$("#atualizar").click(()=>{
+		id = $("#tid").val(); 
+		nome =  $("#tnome").val();
+		email = $("#temail").val();
+		senha = $("#tsenha").val();
+		cpf = $("#tcpf").val();
+
+		dados = 'id='+id+'&nome='+nome+'&email='+email+'&senha='+senha+'&cpf='+cpf;
+
+		$.post("api/update-cliente.php", dados, (t)=>{
+			if(t == 1){
+				$("#modal-view").modal("hide");
+				clientes();
+				update("Usuario "+nome+" foi atualizado");
+				$("#errorup").css("display", "none");
+			}else if(t == 0){
+				$("#errorup").css("display", "block");
+			}
+		})
+	})
+
+	document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>{
+		$("#modal-view").modal("hide");
+		$("#errorup").css("display", "none");
+	}))
+
+
+
+	function card(id){
+		id = 'user='+id;
+			$.post("api/infos-clientes.php", id, (t)=>{
+				t = JSON.parse(t);
+			$("#ccpf").val(t.cpf);
+			$("#cnome").html(t.nome);
+			$("#saldo").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(t.saldo));
+			$("#cnum").html(t.card);
+			$("#cnum").mask("000 000 000");
+			data = t.data.split("-");
+			data = data[2]+"/"+data[1];
+			$("#cdata").html(data);
+			$("#modal-card").modal("show");
+			
+		})
+		
+
+	}
+
+	document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>{
+		$("#modal-card").modal("hide");
+		$("#new-saldo").val("");
+		$("#valor-total").html("R$ 0,00");
+		$("#input-saldo").css("display", "none");
+		$("#confirmar-saldo").css("display", "none");
+		$("#add-saldo").css("display", "block");
+
+	}))
+	$("#feito").click(()=>{
+		$("#modal-card").modal("hide");
+		$(this).find("#new-saldo").val("");
+		$(this).find("#input-saldo").css("display", "none");
+	})
+
+	$("#add-saldo").click(function(){
+		$("#add-saldo").css("display", "none");
+		$("#confirmar-saldo").css("display", "block");
+		$("#input-saldo").toggle(800);
+
+	})
+
+	function upsaldo(id){
+		console.log("up saldo init");
+		id = 'user='+id;
+		$.post("api/infos-clientes.php", id, (t)=>{
+			t = JSON.parse(t);
+			console.log(t);
+			$("#saldo").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(t.saldo));
+		})
+	}
+	$("#confirmar-saldo").click(()=>{
+		user = $("#ccpf").val();
+		valor = $("#new-saldo").val();
+
+		dados = "user="+user+"&valor="+valor;
+		console.log(dados);
+		$.post("api/add-saldo.php", dados, (s)=>{
+			console.log(s);
+			if(s > 0){
+				$("#valor-total").html("R$ 0,00");
+				upsaldo(s);
+				moneyadd("Saldo de R$"+valor+",00 foi depositado");
+			}
+		})
+	})
+
+/*
+	$("#new-saldo").on('keyup', ()=>{
+		valor = $("#new-saldo").val();
+		$("#valor-total").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(valor));
+	})
+*/
+
+	/*	$("#saldop").on('keyup', ()=>{
+		valor = $("#saldop").val();
+		$("#saldo-pre").html(new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(valor));
+	})*/
+
+	$("#buscar").on("keyup", function(){
+		admin = localStorage.getItem("user");
+		s = $(this).val();
+		dados = 'user='+admin+'&cliente='+s;
+		console.log(dados);
+		$.post("api/clientes.php", dados, (sr)=>{
+			//console.log(sr);
+			$("tbody").html(sr);
+		})
+	})
+
+
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-card" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-primary-gradient">
+      <div class="modal-header">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Cartão Cliente</h5>
+        <strong id="cancel" class="text-white" style="cursor: pointer;">x</strong>
+      </div>
+      <div class="modal-body text-white">
+      	<div class="container">
+        	<div class="card bg-info-gradient">
+        		<div class="card-body">
+        			<div class="row">
+        				<input type="hidden" id="ccpf">
+        				<div class="col-auto">
+        					<strong>FACILITA CARD</strong>
+        				</div>
+        				<div class="col"></div>
+        				<div class="col-auto">
+        					<strong>Saldo: <span id="saldo">0,00</span></strong>
+        				</div>
+        			</div>
+        			<div class="row mt-2">
+        				<div class="col-auto">
+        					<img class="img-fluid" src="../assets/img/chip.png" width="40">
+        				</div>
+        			</div>
+        			<div class="container mt-2 ml-3">
+        				<h3 id="cnum" style="letter-spacing: 4px;">
+        					000 000 000
+        				</h3>
+        			</div>
+        			<div class="row mt-1">
+        				<div class="col">
+        					<span style="font-size: 11px">
+        						DATA: <span id="cdata">00/00</span>
+        					</span>
+        				</div>
+        				<div class="col"></div>
+        				<div class="col-auto" style="display: none;" id="input-saldo">
+        					<label class="text-white" id="valor-total">R$ 0,00</label>
+			            		<input class="form-control input-gold" type="text" id="new-saldo">
+        				</div>
+        			</div>
+        			<div class="row">
+        				<div class="col-auto mt-3">
+        					<h4 class="ml-2" id="cnome" style="letter-spacing: 3px;text-transform: uppercase;">
+        						NOME USUARIO
+        					</h4>
+        				</div>
+        				<div class="col"></div>
+        				<div class="col-auto mt-3">
+        					<button class="btn btn-white btn-sm btn-border" id="add-saldo">
+        						Adicionar Saldo
+        					</button>
+
+        					
+        				</div>
+        			</div>
+        		</div>	
+        	</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-danger btn-sm" id="cancel">Fechar</button>
+        <button class="btn btn-success btn-sm" id="confirmar-saldo" style="display: none;">Confirmar Saldo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-primary">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Adicionar Cliente</h5>
+        <strong id="cancel" class="text-white" style="cursor: pointer;">x</strong>
+      </div>
+      <div class="modal-body text-white">
+        <div class="row">
+        	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">NOME COMPLETO</label><strong class="text-danger" id="erro1">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="text" id="nome" autocomplete="off">
+         		</div>
+         	</div>
+
+         	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">E-MAIL</label> <strong class="text-danger" id="erro2">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="text" id="add-email">
+         		</div>
+         	</div>
+
+         	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">CPF </label>
+            		<strong class="text-danger" id="erro3">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="text" id="cpf">
+         		</div>
+         	</div>
+
+         	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">SENHA</label>
+            		<strong class="text-danger" id="erro4">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="password" id="senha">
+         		</div>
+         	</div>
+
+         	<div class="container mt-2">
+         		<div class="row">
+         			<div class="col-6">
+						<label class="form-control-label label-gold">Saldo Inicial</label>
+						<input class="form-control input-gold" type="text" id="saldop">
+					</div>
+				</div>
+         	</div>
+
+        </div>
+
+        <div id="erroradd" class="container text-center mt-3" style="display: none;">
+        	<span class="badge badge-danger">CPF JÁ CADASTRADO!</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-danger btn-sm" id="cancel">Cancelar</button>
+        <button type="button" class="btn btn-white btn-border btn-sm" id="add">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-view" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-primary-gradient">
+      <div class="modal-header">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Dados Cliente</h5>
+        <strong id="cancel" class="text-white" style="cursor: pointer;">x</strong>
+      </div>
+      <div class="modal-body text-white">
+        <div class="row">
+        	<input type="hidden" id="tid">
+
+        		<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">NOME COMPLETO</label>
+            		<input class="form-control input-gold" type="text" id="tnome" autocomplete="off">
+         		</div>
+         	</div>
+
+  			<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">DATA</label>
+            		<span class="form-control input-gold" type="text" id="tdata"></span>
+         		</div>
+         	</div>
+
+        	<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">E-MAIL</label>
+            		<input class="form-control input-gold" type="text" id="temail">
+         		</div>
+         	</div>
+
+
+
+         	<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">SENHA</label>
+            		<input class="form-control input-gold" type="password" id="tsenha">
+         		</div>
+         	</div>
+
+
+         	<div class="col-12 col-md-12">
+						<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">CPF</label>
+            		<input class="form-control input-gold" type="text" id="tcpf">
+         		</div>
+         	</div>
+
+        </div>
+        <div id="errorup" class="container text-center mt-3" style="display: none;">
+        	<span class="badge badge-danger">CPF JÁ CADASTRADO!</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-danger btn-sm" id="cancel">Cancelar</button>
+        <button type="button" class="btn btn-white btn-border btn-sm" id="atualizar">Atualizar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,7 +3,7 @@
 <div class="card">
 								<div class="card-header">
 									<div class="d-flex align-items-center">
-										<h4 class="card-title">Extorno</h4>
+										<h4 class="card-title">Estorno</h4>
 										
 									</div>
 								</div>
@@ -13,7 +13,9 @@
 									<div class="table-responsive">
 										<div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
 											
-									<div class="row"><div class="col-sm-12">
+									<div class="row">
+										<div class="col-sm-12 col-md-6"></div>
+												<div class="col-sm-12 col-md-6"><div id="add-row_filter" class="dataTables_filter"><label>Buscar:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="add-row" id="buscar"></label></div></div></div><div class="row"><div class="col-sm-12">
 										<table id="add-row" class="display table table-striped table-hover dataTable" role="grid" aria-describedby="add-row_info">
 											
 
@@ -102,6 +104,14 @@ document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>
 
 	}
 
+
+$("#buscar").on('keyup', function(){
+	dados = 'estorno='+$("#buscar").val()+'&owner='+localStorage.getItem('cpfuser');
+	console.log(dados);
+	$.post("api/vendas.php", dados, (t)=>{
+		$("tbody").html(t)
+	})
+})
 
 </script>
 

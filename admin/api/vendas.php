@@ -2,13 +2,14 @@
 include "conn.php";
 
 $user = $_POST['owner'];
-
+$estorno = @$_POST['estorno'];
 
 $owner = $pdo->query("SELECT id FROM users WHERE cpf = '$user'")->fetchColumn();
-
-	
+if(isset($estorno)){
+	$vendas = $pdo->query("SELECT * FROM transacoes WHERE user like '%$estorno%' AND status = '2' AND owner = '$owner'");
+}else{
 	$vendas = $pdo->query("SELECT * FROM transacoes WHERE status = '2' AND owner = '$owner' ORDER BY id DESC");
-
+}
 if($vendas->rowCount() > 0){
 foreach ($vendas as $key) {
  	 echo '<tr role="row" class="odd">

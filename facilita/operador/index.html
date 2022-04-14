@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8">
+	<title>Facilita - Operador</title>
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<link rel="icon" href="../assets/img/icon.ico" type="image/x-icon"/>
+
+	<!-- Fonts and icons -->
+	<script src="../assets/js/plugin/webfont/webfont.min.js"></script>
+	<script>
+		WebFont.load({
+			google: {"families":["Lato:300,400,700,900"]},
+			custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['../assets/css/fonts.min.css']},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/atlantis.css">
+
+	<!-- CSS Just for demo purpose, don't include it in your project -->
+	<link rel="stylesheet" href="../assets/css/demo.css">
+</head>
+<body>
+	<div class="wrapper overlay-sidebar">
+		<div class="main-header">
+			<!-- Logo Header -->
+			<div class="logo-header" data-background-color="blue2">
+				
+				<a href="index.html" class="logo">
+					<img src="../assets/img/f-logo.png" alt="navbar brand" class="navbar-brand">
+				</a>
+				
+				<button class="topbar-toggler more"><i class="icon-options-vertical"></i></button>
+			
+			</div>
+			<!-- End Logo Header -->
+
+			<!-- Navbar Header -->
+			<nav class="navbar navbar-header navbar-expand-lg" data-background-color="blue2">
+				
+				<div class="container-fluid">
+					<div class="collapse" id="search-nav">
+						
+					</div>
+					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+						<li class="nav-item dropdown hidden-caret">
+							<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
+								<div class="avatar-sm">
+									<img src="../assets/img/user.png" alt="..." class="avatar-img rounded-circle">
+								</div>
+							</a>
+							<ul class="dropdown-menu dropdown-user animated fadeIn">
+								<div class="dropdown-user-scroll scrollbar-outer">
+									<li>
+										
+										<a class="dropdown-item" onclick="sair()">Sair</a>
+									</li>
+								</div>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<!-- End Navbar -->
+		</div>
+
+		
+
+		<div class="main-panel">
+			<div class="content">
+				<div class="panel-header bg-primary-gradient">
+					<div class="page-inner py-5">
+						<div class="">
+							<div class="text-center">
+								<h2 class="text-white pb-2 fw-bold text-center">
+									Saldo Caixa 
+									<span id="saldo">R$ 0,00</span>
+								</h2>
+								
+							</div>
+							<div class="ml-md-auto py-2 py-md-0">
+								<a id="modos" class="btn btn-white btn-sm btn-border mr-2">Tema Escuro</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			<div class="page-inner mt--5">
+				<div class="card mt--2">
+					<div class="container mt-3">
+						
+						<div class="row mb-4">
+
+							<div class="col-12 col-md-6">
+								<div class="row">
+									<div class="col-12 col-md-12">
+										<div class="form-group">
+											<label>CPF CLIENTE</label>
+											<input type="text" class="form-control" id="cpf">
+										</div>
+									</div>
+									<div class="col-7 col-md-8">
+										<div class="form-group">
+											<label for="senha">CARTÃO</label>
+											<input type="text" class="form-control" id="cartao">
+										</div>
+									</div>
+									<div class="col-5 col-md-4">
+										<div class="form-group">
+											<label for="senha">VALOR VENDA</label>
+											<input type="text" class="form-control" id="valor">
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+							<div class="col-12 col-md-6 mt-3">
+								<div class="card bg-primary-gradient text-white" id="cartao">
+					        		<div class="card-body">
+
+					        			<div class="row">
+					        				<input type="hidden" id="ccpf">
+					        				<div class="col-auto">
+					        					<strong>FACILITA CARD</strong>
+					        				</div>
+
+					        				<div class="col"></div>
+
+					        				<div class="col-auto">
+					        					<strong><span id="total">R$ 0,00</span></strong>
+					        				</div>
+					        			</div>
+
+					        			<div class="row mt-2">
+					        				<div class="col-auto">
+					        					<img class="img-fluid" src="../assets/img/chip.png" width="40">
+					        				</div>
+					        			</div>
+
+					        			<div class="container mt-2 ml-3">
+					        				<h3 id="cnum" style="letter-spacing: 4px;">
+					        					000000000
+					        				</h3>
+					        			</div>
+
+					        			<div class="row mt-1">
+					        				<div class="col-auto">
+					        					<span style="font-size: 11px">
+					        						<span id="cpf-cliente">000.000.000-00</span>
+					        					</span>
+					        				</div>
+					        			</div>
+
+					        		</div>	
+					        	</div>
+
+
+
+							</div>
+							<div class="container text-center mt-3">
+								<button class="btn btn-primary" id="continuar">
+									CONTINUAR
+								</button>
+							</div>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+		</div>
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul class="nav">
+							
+						</ul>
+					</nav>
+					<div class="copyright ml-auto">
+						2022 <i class="fa fa-heart heart text-danger"></i> by <a href="https://www.themekita.com">Facilita</a>
+					</div>				
+				</div>
+			</footer>
+		</div>
+		
+
+	</div>
+	<!--   Core JS Files   -->
+	<script src="../assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="../assets/js/core/popper.min.js"></script>
+	<script src="../assets/js/core/bootstrap.min.js"></script>
+
+	<!-- jQuery UI -->
+	<script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="../assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+
+	<!-- jQuery Scrollbar -->
+	<script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+
+	<!-- Chart JS -->
+	<script src="../assets/js/plugin/chart.js/chart.min.js"></script>
+
+	<!-- jQuery Sparkline -->
+	<script src="../assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+	<!-- Chart Circle -->
+	<script src="../assets/js/plugin/chart-circle/circles.min.js"></script>
+
+	<!-- Datatables -->
+	<script src="../assets/js/plugin/datatables/datatables.min.js"></script>
+
+	<!-- Bootstrap Notify -->
+	<script src="../assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+	<!-- jQuery Vector Maps -->
+	<script src="../assets/js/plugin/jqvmap/jquery.vmap.min.js"></script>
+	<script src="../assets/js/plugin/jqvmap/maps/jquery.vmap.world.js"></script>
+
+	<!-- Sweet Alert -->
+	<script src="../assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+	<!-- Atlantis JS -->
+	<script src="../assets/js/atlantis.min.js"></script>
+
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="../assets/js/setting-demo.js"></script>
+	<script src="../assets/js/demo.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.8/jquery.mask.min.js"></script>
+</body>
+</html>
+
+
+<script type="text/javascript">
+	window.onload = color();
+	window.onload = login();
+
+	function color(){
+		$("body").attr("data-background-color", localStorage.getItem("bg-body"));
+	}
+	$("#modos").click(function(){
+		b = $("body").attr("data-background-color");
+		if(b == "dark"){
+			$(this).html("Tema Escuro");
+			$("body").attr("data-background-color","white");
+			localStorage.setItem("bg-body", "white");
+		}else{
+			$(this).html("Tema Claro");
+			$("body").attr("data-background-color","dark");
+			localStorage.setItem("bg-body", "dark");
+		}
+	})
+
+	function login(){
+		user = localStorage.getItem("user");
+		nivel = localStorage.getItem("nivel");
+
+		if(user){
+			if(nivel == '3'){
+				console.log("Operador logado");
+				
+			}else{
+				location.href = "../login.html";
+			}
+		}else{
+			location.href = "../login.html";
+		}
+	}
+
+$("#cpf").mask("000.000.000-00", {reverse: false});
+$("#cartao").mask("000   000   000", {reverse: false});
+$("#cnum").mask("000   000   000", {reverse: false});
+	
+	$("#valor").on("keyup", function(){
+		valor = $("#valor").val();
+		$("#total").html("R$"+valor);
+	})
+
+	$("#cpf").on("keyup", function(){
+		$("#cpf-cliente").html($(this).val());
+	})
+	$("#cartao").on("keyup", function(){
+		$("#cnum").html($("#cartao").val());
+	})
+
+window.onload = saldo();
+function saldo(){
+	user = "cpf="+localStorage.getItem("cpfuser");
+	$.post("api/vendas.php", user, (s)=>{
+		$("#saldo").html( new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(s));
+	})
+}
+
+
+$("#continuar").click(function(){
+	cpf = $("#cpf").val();
+	card = $("#cartao").val().replaceAll(" ", "");
+	valor = $("#valor").val().replaceAll(",", ".");
+
+	dados = 'cpf='+cpf+'&cartao='+card+'&valor='+valor;
+	
+
+	$.post("api/inserir.php", dados, (d)=>{
+		d = JSON.parse(d);
+		console.log(d);
+
+		if(d.status == 'success'){
+			debito(d.motivo);
+			som = new Audio("money.mp3");
+      		som.play();
+			saldo();
+			$("#cpf").val("");
+			$("#cartao").val("");
+			$("#valor").val("");
+		}else if(d.status == 'erro'){
+			fail(d.motivo);
+		}
+	})
+})
+
+function sair(){
+	localStorage.removeItem("user");
+	localStorage.removeItem("cpfuser");
+	localStorage.removeItem("nivel");
+
+	location.href = "../login.html";
+}
+
+</script>

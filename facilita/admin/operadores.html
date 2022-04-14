@@ -1,0 +1,296 @@
+<style>
+	#erro1, #erro2, #erro3, #erro4{
+			display: none;
+	} 
+</style>
+<div class="card">
+								<div class="card-header">
+									<div class="d-flex align-items-center">
+										<h4 class="card-title">Operadores</h4>
+										<button class="btn btn-primary btn-sm ml-auto" id="add-opera">
+											<i class="fa fa-plus mr-2"></i>
+											ADICIONAR
+										</button>
+									</div>
+								</div>
+								<div class="card-body">
+									
+
+									<div class="table-responsive">
+										<div id="add-row_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+											<div class="row">
+												<div class="col-sm-12 col-md-6"></div>
+												<div class="col-sm-12 col-md-6"><div id="add-row_filter" class="dataTables_filter"><label>Buscar:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="add-row" id="buscar"></label></div></div></div><div class="row"><div class="col-sm-12"><table id="add-row" class="display table table-striped table-hover dataTable" role="grid" aria-describedby="add-row_info">
+											
+
+											<thead>
+												<tr role="row">
+													<th style="width: 194.531px;">Nome</th>
+													<th style="width: 194.531px;">E-mail</th>
+													<th style="width: 284.562px;">CPF</th>
+													<th style="width: 151.625px;">Status</th>
+													<th style="width: 126.281px;">Ações</th>
+												</tr>
+											</thead>
+										
+											<tbody>
+					
+				  							</tbody>
+										</table>
+									</div>
+									</div>
+										
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+<script type="text/javascript">
+	window.onload = operadores();
+
+	function operadores(){
+		user  = 'user='+localStorage.getItem("user");
+		$.post("api/operadores.php", user,(t)=>{
+			$("tbody").html(t);
+		})
+	}
+
+	$("#add-opera").click(function(){
+		$("#modal-add").modal("show");
+	})
+
+	$("#cpf").mask("000.000.000-00", {reverse: false});
+
+	$("#add").click(()=>{
+		nome = $("#nome").val();
+		email = $("#add-email").val();
+		senha = $("#senha").val();
+		cpf = $("#cpf").val();
+		ow = localStorage.getItem("user");
+		
+		dados = 'nome='+nome+'&email='+email+'&senha='+senha+'&cpf='+cpf+'&owner='+ow;
+		console.log(dados);
+	if(nome == ''){
+		$("#erro1").css("display", "block");
+	}else if(email == ''){
+		$("#erro2").css("display", "block");
+	}else if(senha == ''){
+		$("#erro3").css("display", "block");
+	}else if(cpf == ''){
+		$("#erro4").css("display", "block");
+	}else{
+
+		$.post("api/add-operador.php", dados, (t)=>{
+			if(t == 1){
+			$("#modal-add").modal("hide");
+				operador("Operador "+nome+" adicionado");
+				operadores();
+				$("#nome").val("");
+				$("#add-email").val("");
+				$("#senha").val("");
+				$("#cpf").val("");
+				$("#erro1").css("display", "none");
+				$("#erro2").css("display", "none");
+				$("#erro3").css("display", "none");
+				$("#erro4").css("display", "none");
+			}else if(t == 0){
+				$("#erroradd").css("display", "block");
+			
+			}
+		})
+	}
+	})
+
+
+	function ver(id){
+		id = 'user='+id;
+		$.post("api/infos-clientes.php", id, (t)=>{
+			t = JSON.parse(t);
+			$("#tid").val(t.id);
+			$("#tnome").val(t.nome);
+			$("#temail").val(t.email);
+			$("#tsenha").val(t.senha);
+			$("#tcpf").val(t.cpf);
+			$("#tdata").html(t.data.split("-").reverse().join("/"));
+
+			$("#modal-view").modal("show");
+		})
+	}
+
+
+$("#atualizar").click(()=>{
+		id = $("#tid").val(); 
+		nome =  $("#tnome").val();
+		email = $("#temail").val();
+		senha = $("#tsenha").val();
+		cpf = $("#tcpf").val();
+
+		dados = 'id='+id+'&nome='+nome+'&email='+email+'&senha='+senha+'&cpf='+cpf;
+		console.log(dados);
+		$.post("api/update-cliente.php", dados, (t)=>{
+			if(t == 1){
+				$("#modal-view").modal("hide");
+				operadores();
+				update("Usuario "+nome+" foi atualizado");
+				$("#erroup").css("display", "none");
+			}else if(t == 0){
+				$("#erroup").css("display", "block");
+			}
+		})
+	})
+
+	document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>{
+		$("#modal-view").modal("hide");
+	}))
+
+	document.querySelectorAll("#cancel").forEach(b=>b.addEventListener('click', ()=>{
+		$("#modal-add").modal("hide");
+		$("#nome").val("");
+		$("#add-email").val("");
+		$("#senha").val("");
+		$("#cpf").val("");
+		$("#erroradd").css("display", "none");
+	}))
+$("#buscar").on("keyup", function(){
+		admin = localStorage.getItem("user");
+		s = $(this).val();
+		dados = 'user='+admin+'&cliente='+s;
+		console.log(dados);
+		$.post("api/operadores.php", dados, (sr)=>{
+			//console.log(sr);
+			$("tbody").html(sr);
+		})
+	})
+	
+</script>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-primary">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Adicionar Operador</h5>
+        <strong id="cancel" class="text-white" style="cursor: pointer;">x</strong>
+      </div>
+      <div class="modal-body text-white">
+        <div class="row">
+        	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">NOME COMPLETO</label><strong class="text-danger" id="erro1">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="text" id="nome" autocomplete="off">
+         		</div>
+         	</div>
+
+         	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">E-MAIL</label> <strong class="text-danger" id="erro2">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="text" id="add-email">
+         		</div>
+         	</div>
+
+         	<div class="col-12 col-md-6">
+					<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">CPF</label>
+            		<strong class="text-danger" id="erro4">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="text" id="cpf">
+         		</div>
+         	</div>
+
+         	<div class="col-12 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">SENHA</label>
+            		<strong class="text-danger" id="erro3">*Obrigatório</strong>
+            		<input class="form-control input-gold" type="password" id="senha">
+         		</div>
+         	</div>
+
+
+        </div>
+
+        <div id="erroradd" class="container text-center mt-3" style="display: none;">
+        	<span class="badge badge-danger">CPF JÁ CADASTRADO!</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-danger btn-sm" id="cancel">Cancelar</button>
+        <button type="button" class="btn btn-white btn-border btn-sm" id="add">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-view" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-primary-gradient">
+      <div class="modal-header">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Dados Operador</h5>
+        <strong id="cancel" class="text-white" style="cursor: pointer;">x</strong>
+      </div>
+      <div class="modal-body text-white">
+        <div class="row">
+        	<input type="hidden" id="tid">
+
+        	 	<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">NOME</label>
+            		<input class="form-control input-gold" type="text" id="tnome" autocomplete="off">
+         		</div>
+         	</div>
+
+
+         	   	<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">DATA</label>
+            		<span class="form-control input-gold" type="text" id="tdata"></span>
+         		</div>
+         	</div>
+
+        	<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">E-MAIL</label>
+            		<input class="form-control input-gold" type="text" id="temail">
+         		</div>
+         	</div>
+
+         	<div class="col-6 col-md-6">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">SENHA</label>
+            		<input class="form-control input-gold" type="password" id="tsenha">
+         		</div>
+         	</div>
+
+
+
+      
+
+         	<div class="col-12 col-md-12">
+				<div class="form-group float-label active">
+            		<label class="form-control-label label-gold">CPF</label>
+            		<input class="form-control input-gold" type="text" id="tcpf">
+         		</div>
+         	</div>
+
+       
+
+
+        </div>
+
+        <div class="container text-center" id="erroup" style="display:none;">
+        		<span class="badge badge-danger">
+        			CPF já Existente!
+        		</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  class="btn btn-danger btn-sm" id="cancel">Cancelar</button>
+        <button type="button" class="btn btn-white btn-border btn-sm" id="atualizar">Atualizar</button>
+      </div>
+    </div>
+  </div>
+</div>
